@@ -1,7 +1,6 @@
 ﻿package com.valorin.commands.sub;
 
 import static com.valorin.Main.getInstance;
-import static com.valorin.configuration.DataFile.blacklist;
 import static com.valorin.configuration.languagefile.MessageSender.gm;
 import static com.valorin.configuration.languagefile.MessageSender.sm;
 
@@ -17,6 +16,7 @@ import com.valorin.caches.EnergyCache;
 import com.valorin.commands.SubCommand;
 import com.valorin.commands.way.InServerCommand;
 import com.valorin.configuration.ConfigManager;
+import com.valorin.data.Data;
 import com.valorin.request.RequestsHandler;
 import com.valorin.specialtext.ClickableText;
 import com.valorin.specialtext.Dec;
@@ -59,7 +59,7 @@ public class CMDRequestSend extends SubCommand implements InServerCommand {
 			sm("&c[x]不能向自己发送请求！", p);
 			return true;
 		}
-		List<String> blist = blacklist.getStringList("BlackList");
+		List<String> blist = Data.getBlacklist();
 		if (blist.contains(sn)) {
 			sm("&c[x]您已被禁赛！", p);
 			return true;

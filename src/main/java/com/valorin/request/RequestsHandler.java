@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.valorin.Main;
@@ -19,7 +18,7 @@ public class RequestsHandler {
 
 	private Set<Request> requests = new HashSet<>();
 	private Map<Request, BukkitTask> timers = new HashMap<Request, BukkitTask>();
-	private Map<Request, Long> times = new HashMap<Request, Long>();
+	private Map<Request, Integer> times = new HashMap<Request, Integer>();
 
 	public Request getRequest(String sender, String receiver) {
 		if (requests == null) {
@@ -44,25 +43,23 @@ public class RequestsHandler {
 	public void addRequest(String sender, String receiver) {
 		Request request = new Request(sender, receiver);
 		requests.add(request);
-		times.put(request, System.currentTimeMillis());
-		BukkitTask timer = new BukkitRunnable() {
-			@Override
-			public void run() {
-				times.put(request, times.get(request));
-				if (times.get(request) == 1200) {
-					if (getRequest(sender, receiver) != null) {
-						removeRequest(sender, receiver);
-						if (Bukkit.getPlayerExact(sender) != null) {
-							sm("&b你发送给{receiver}的请求长时间未得处理，已取消...",
-									Bukkit.getPlayerExact(sender), "receiver",
-									new String[] { receiver });
+		times.put(request, 0);
+		BukkitTask timer = Bukkit.getScheduler().runTaskTimerAsynchronously(
+				Main.getInstance(),
+				() -> {
+					times.put(request, times.get(request) + 1);
+					if (times.get(request) == 60) {
+						if (getRequest(sender, receiver) != null) {
+							removeRequest(sender, receiver);
+							if (Bukkit.getPlayerExact(sender) != null) {
+								sm("&b你发送给{receiver}的请求长时间未得处理，已取消...",
+										Bukkit.getPlayerExact(sender),
+										"receiver", new String[] { receiver });
+							}
 						}
+						timers.get(request).cancel();
 					}
-					this.cancel();
-					timers.remove(request);
-				}
-			}
-		}.runTaskTimerAsynchronously(Main.getInstance(), 20, 20);
+				}, 20, 20);
 		timers.put(request, timer);
 	}
 

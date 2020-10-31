@@ -1,7 +1,6 @@
 ﻿package com.valorin.configuration;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -49,56 +48,49 @@ public class DataFile {
 	public static void saveAreas() {
 		try {
 			areas.save(areasFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 
 	public static void saveShop() {
 		try {
 			shop.save(shopFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 
 	public static void saveRecords() {
 		try {
 			records.save(recordsFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 
 	public static void savepd() {
 		try {
 			pd.save(pdFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 
 	public static void saveSymbols() {
 		try {
 			symbols.save(symbolsFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 
 	public static void saveBlackList() {
 		try {
 			blacklist.save(blacklistFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 
 	public static void saveRanking() {
 		try {
 			ranking.save(rankingFile);
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
 		}
 	}
 }

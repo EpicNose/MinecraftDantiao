@@ -115,12 +115,19 @@ public class RegPAPI extends PlaceholderHook {
 				return gm("&7暂无", p);
 			}
 		}
-		DanHandler dan = getInstance().getDanHandler();
+		DanHandler dh = getInstance().getDanHandler();
 		if (i.equalsIgnoreCase("duanwei")) {
-			return dan.getPlayerDan(p.getName()).getDisplayName();
+			String danDisplayName;
+			if (dh.getPlayerDan(p.getName()) == null) {
+				danDisplayName = getInstance().getConfigManager()
+						.getInitialDanName();
+			} else {
+				danDisplayName = dh.getPlayerDan(p.getName()).getDisplayName();
+			}
+			return danDisplayName;
 		}
 		if (i.equalsIgnoreCase("exptolevelup")) {
-			return "" + dan.getNeedExpToLevelUp(p.getName());
+			return "" + dh.getNeedExpToLevelUp(p.getName());
 		}
 		Record lastRecord = recordCache.getLast(name);
 		if (i.equalsIgnoreCase("lastdamage")) {

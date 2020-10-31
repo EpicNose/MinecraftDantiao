@@ -76,13 +76,14 @@ public class ConfigUpdate {
 			/* e.printStackTrace(); */
 		}
 
-		Bukkit.broadcastMessage("" + nowVersion);
 		if (nowVersion < 1) {
 			Ver_1.execute();
 		} else {
 			switch (nowVersion) {
 			case 1:
 				Ver_2.execute();
+			case 2:
+				Ver_3.execute();
 			}
 		}
 

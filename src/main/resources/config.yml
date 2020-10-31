@@ -37,7 +37,7 @@
 #
 # The version of this config.
 # 【请勿修改此项】本配置文件的版本号，用于插件检测并更新配置文件内容
-ConfigVersion: 2
+ConfigVersion: 3
 # Players with dt.admin permission will be noticed about new Dantiao version when logining
 # 是否在上线时接收更新检查信息（拥有dt.admin权限的玩家才能接收到）
 CheckVersion: true
@@ -140,6 +140,9 @@ Game:
     # 竞技场创建工具的材质（默认为木棍）
     CreatingToolMaterial: STICK
   Start:
+    # Whether change the player's game mode to SURVIVAL compulsorily when the game starts
+    # 是否在比赛开始时强行为玩家切换为生存模式
+    ChangeGameMode: true
     # Set the period during which players are allowed to have a game and you can set more periods.If not,game will not be limited
     # Searching stands for the period during which players are allowed to use SEACHING PANEL
     # Invite stands for the period during which players are allowed to send DUEL request to others
@@ -244,46 +247,45 @@ Dan:
   # Name代表段位的称呼；Exp代表达到此段位所需要的经验量
   # 格式可参照下方默认配置
   CustomDan:
-    dan1:
+    dan0:
       Name: "&f[&2青铜I&f]&r"
       Exp: 50
-    dan2:
+    dan1:
       Name: "&f[&2青铜II&f]&r"
       Exp: 150
-    dan3:
+    dan2:
       Name: "&f[&2青铜III&f]&r"
       Exp: 280
-    dan4:
+    dan3:
       Name: "&f[&3黑铁I&f]&r"
       Exp: 500
-    dan5:
+    dan4:
       Name: "&f[&3黑铁II&f]&r"
       Exp: 760
-    dan6:
+    dan5:
       Name: "&f[&3黑铁III&f]&r"
       Exp: 1200
-    dan7:
+    dan6:
       Name: "&f[&e黄金I&f]&r"
       Exp: 1550
-    dan8:
+    dan7:
       Name: "&f[&e黄金II&f]&r"
       Exp: 2100
-    dan9:
+    dan8:
       Name: "&f[&e黄金III&f]&r"
       Exp: 3500
-    dan10:
+    dan9:
       Name: "&f[&b钻石I&f]&r"
       Exp: 5000
-    dan11:
+    dan10:
       Name: "&f[&b钻石II&f]&r"
       Exp: 6666
-    dan12:
+    dan11:
       Name: "&f[&b钻石III&f]&r"
       Exp: 8888
-    dan13:
+    dan12:
       Name: "&f[&6&l战斗天尊&f]&r"
       Exp: 10000
-    dan14:
+    dan13:
       Name: "&f[&d&l荣耀王者&f]&r"
       Exp: 15000
-  

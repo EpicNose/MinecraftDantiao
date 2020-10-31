@@ -241,8 +241,8 @@ public class HD {
 									winRankingLocation, winListEx);
 				}
 			} else {
-				Bukkit.getConsoleSender().sendMessage(
-						gm("&c检测到[胜场排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));
+				/*Bukkit.getConsoleSender().sendMessage(
+						gm("&c检测到[胜场排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));*/
 			}
 		}
 		if (n == 0 || n == 2) {
@@ -285,8 +285,8 @@ public class HD {
 									KDRankingLocation, KDListEx);
 				}
 			} else {
-				Bukkit.getConsoleSender().sendMessage(
-						gm("&c检测到[KD排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));
+				/*Bukkit.getConsoleSender().sendMessage(
+						gm("&c检测到[KD排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));*/
 			}
 		}
 	}

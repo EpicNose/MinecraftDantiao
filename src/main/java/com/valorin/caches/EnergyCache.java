@@ -78,9 +78,6 @@ public class EnergyCache {
 	}
 
 	public void load(String name) {
-		if (!isEnable) {
-			return;
-		}
 		if (!map.keySet().contains(name)) {
 			Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(),
 					() -> {
@@ -91,6 +88,9 @@ public class EnergyCache {
 	}
 
 	public void save(boolean isAsyn) {
+		if (!isEnable) {
+			return;
+		}
 		for (String name : map.keySet()) {
 			Data.setEnergy(name, map.get(name), isAsyn);
 		}
@@ -118,12 +118,15 @@ public class EnergyCache {
 	public double getEnergyResumePerSecond() { // 获取每秒恢复的精力值
 		return energyResumePerSecond;
 	}
-	
-	public boolean isEnable() { //本功能是否开启
+
+	public boolean isEnable() { // 本功能是否开启
 		return isEnable;
 	}
 
 	public void cancelTimer() {
+		if (!isEnable) {
+			return;
+		}
 		timer.cancel();
 	}
 }

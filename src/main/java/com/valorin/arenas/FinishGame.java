@@ -8,6 +8,8 @@ import static com.valorin.util.SyncBroadcast.bc;
 
 import java.util.List;
 
+import javax.rmi.CORBA.Util;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -25,6 +27,7 @@ import com.valorin.event.game.CompulsoryTeleport;
 import com.valorin.task.SettleEnd;
 import com.valorin.teleport.ToLobby;
 import com.valorin.teleport.ToLogLocation;
+import com.valorin.util.Debug;
 
 public class FinishGame {
 	public static void normalEnd(String name, String winner, String loser,
@@ -60,128 +63,140 @@ public class FinishGame {
 						arena.getLoaction(arena.isp1(loser)));
 			}
 		}
-
-		w.setHealth(w.getMaxHealth());
-		w.setFoodLevel(20);
-		if (l != null && !l.isDead()) {
-			l.setHealth(l.getMaxHealth());
-			l.setFoodLevel(20);
-		}
-		EnergyCache energyCache = getInstance().getCacheHandler().getEnergy();
-		if (energyCache.isEnable()) {
-			double energyNeeded = energyCache.getEnergyNeeded();
-			energyCache.set(winner, energyCache.get(winner) - energyNeeded);
-			energyCache.set(loser, energyCache.get(loser) - energyNeeded);
-		}
-
-		arena.setCanTeleport(true);
-		arena.setWatchersTeleport(true);
-		List<String> watchers = arena.getWatchers();
-		Location lobbyLocation = getInstance().getCacheHandler().getArea()
-				.getLobby();
-		if (lobbyLocation != null) {
-			ToLobby.to(w);
-			ToLobby.to(l);
-			sm("&b已将你带回单挑大厅！", w);
-			if (l != null) {
-				sm("&b已将你带回单挑大厅！", l);
+		try {
+			w.setHealth(w.getMaxHealth());
+			w.setFoodLevel(20);
+			if (l != null && !l.isDead()) {
+				l.setHealth(l.getMaxHealth());
+				l.setFoodLevel(20);
 			}
-			for (String watcher : watchers) {
-				if (Bukkit.getPlayerExact(watcher) != null) {
-					ToLobby.to(Bukkit.getPlayerExact(watcher));
+			EnergyCache energyCache = getInstance().getCacheHandler()
+					.getEnergy();
+			if (energyCache.isEnable()) {
+				double energyNeeded = energyCache.getEnergyNeeded();
+				energyCache.set(winner, energyCache.get(winner) - energyNeeded);
+				energyCache.set(loser, energyCache.get(loser) - energyNeeded);
+			}
+
+			arena.setCanTeleport(true);
+			arena.setWatchersTeleport(true);
+			List<String> watchers = arena.getWatchers();
+			Location lobbyLocation = getInstance().getCacheHandler().getArea()
+					.getLobby();
+			if (lobbyLocation != null) {
+				ToLobby.to(w);
+				ToLobby.to(l);
+				sm("&b已将你带回单挑大厅！", w);
+				if (l != null) {
 					sm("&b已将你带回单挑大厅！", l);
 				}
-			}
-		} else {
-			Location winnerLocation = arena
-					.getLoaction(arena.isp1(w.getName()));
-			Location loserLocation = arena.getLoaction(arena.isp1(l.getName()));
-			ToLogLocation.to(w, l, winnerLocation, loserLocation);
-			for (String watcher : watchers) {
-				if (Bukkit.getPlayerExact(watcher) != null) {
-					sm("&b[报告] &7你所观战的竞技场上的比赛已结束，请自行传送回家...",
-							Bukkit.getPlayerExact(watcher), false);
+				for (String watcher : watchers) {
+					if (Bukkit.getPlayerExact(watcher) != null) {
+						ToLobby.to(Bukkit.getPlayerExact(watcher));
+						sm("&b已将你带回单挑大厅！", l);
+					}
 				}
-			}
-		}// 回到原处
-		ConfigManager configManager = getInstance().getConfigManager();
-		boolean isFirework = false;
-		int startWay = arena.getStartWay();
-		if (startWay == 1) {
-			isFirework = configManager.isFireworkAwardedByPanel();
-		}
-		if (startWay == 2) {
-			isFirework = configManager.isFireworkAwardedByInviting();
-		}
-		if (isFirework) {
-			WinFirework.setFirework(w.getLocation());
-			sm("&a[v]WOW！服务器专门为你的获胜放了一朵烟花~", w);
-		}
-
-		busyArenasName.remove(arena.getName());
-		getInstance().getSingleLineChartData().addGameTimes();
-
-		ArenaEventAbs event;
-		if (isDraw) {
-			event = new ArenaDrawFinishEvent(w, l, arena);
-		} else {
-			event = new ArenaFinishEvent(w, l, arena);
-		}
-		Bukkit.getServer().getPluginManager().callEvent(event);
-
-		new BukkitRunnable() {
-			public void run() {
-				try {
-					SettleEnd.settle(arena, w, l, isDraw);
-				} catch (Exception e) {
-					e.printStackTrace();
+			} else {
+				Location winnerLocation = arena.getLoaction(arena.isp1(w
+						.getName()));
+				Location loserLocation = arena.getLoaction(arena.isp1(l
+						.getName()));
+				ToLogLocation.to(w, l, winnerLocation, loserLocation);
+				for (String watcher : watchers) {
+					if (Bukkit.getPlayerExact(watcher) != null) {
+						sm("&b[报告] &7你所观战的竞技场上的比赛已结束，请自行传送回家...",
+								Bukkit.getPlayerExact(watcher), false);
+					}
 				}
+			}// 回到原处
+			ConfigManager configManager = getInstance().getConfigManager();
+			boolean isFirework = false;
+			int startWay = arena.getStartWay();
+			if (startWay == 1) {
+				isFirework = configManager.isFireworkAwardedByPanel();
+			}
+			if (startWay == 2) {
+				isFirework = configManager.isFireworkAwardedByInviting();
+			}
+			if (isFirework) {
+				WinFirework.setFirework(w.getLocation());
+				sm("&a[v]WOW！服务器专门为你的获胜放了一朵烟花~", w);
+			}
 
-				DanHandler dh = getInstance().getDanHandler();
-				dh.refreshPlayerDan(winner);
-				dh.refreshPlayerDan(loser);
-				if (arena.getDan(arena.isp1(winner)) != null) {
-					List<CustomDan> danList = dh.getCustomDans();
-					for (int i = 0; i < danList.size(); i++) {
+			busyArenasName.remove(arena.getName());
+			getInstance().getSingleLineChartData().addGameTimes();
+
+			ArenaEventAbs event;
+			if (isDraw) {
+				event = new ArenaDrawFinishEvent(w, l, arena);
+			} else {
+				event = new ArenaFinishEvent(w, l, arena);
+			}
+			Bukkit.getServer().getPluginManager().callEvent(event);
+
+			new BukkitRunnable() {
+				public void run() {
+					try {
+						SettleEnd.settle(arena, w, l, isDraw);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					DanHandler dh = getInstance().getDanHandler();
+					dh.refreshPlayerDan(winner);
+					dh.refreshPlayerDan(loser);
+					if (arena.getDan(arena.isp1(winner)) != null) {
 						CustomDan danBefore = arena.getDan(arena.isp1(winner));
 						CustomDan danNow = dh.getPlayerDan(winner);
 						if (!danBefore.equals(danNow)) {
 							bc(gm("&a[恭喜]: &7玩家 &e{player} &7的单挑段位成功升到了&r{dan}",
 									null, "player dan", new String[] { winner,
-											danNow.getDisplayName() }), startWay);
-						}
-					}
-				} else {
-					CustomDan danNow = dh.getPlayerDan(winner);
-					bc(gm("&a[恭喜]: &7玩家 &e{player} &7突破了无段位的身份，首次获得了段位：&r{dan}&7！祝TA在单挑战斗的路上越走越远！",
-							null, "player dan",
-							new String[] { winner, danNow.getDisplayName() }), startWay);
-				}
-				if (isDraw) {
-					if (arena.getDan(arena.isp1(loser)) != null) {
-						List<CustomDan> danList = dh.getCustomDans();
-						for (int i = 0; i < danList.size(); i++) {
-							CustomDan danBefore = arena.getDan(arena
-									.isp1(loser));
-							CustomDan danNow = dh.getPlayerDan(loser);
-							if (!danBefore.equals(danNow)) {
-								bc(gm("&a[恭喜]: &7玩家 &e{player} &7的单挑段位成功升到了&r{dan}",
-										null,
-										"player dan",
-										new String[] { loser,
-												danNow.getDisplayName() }), startWay);
-							}
+											danNow.getDisplayName() }),
+									startWay);
 						}
 					} else {
-						CustomDan danNow = dh.getPlayerDan(loser);
-						bc(gm("&a[恭喜]: &7玩家 &e{player} &7突破了无段位的身份，首次获得了段位：&r{dan}&7！祝TA在单挑战斗的路上越走越远！",
-								null, "player dan", new String[] { loser,
-										danNow.getDisplayName() }), startWay);
+						CustomDan danNow = dh.getPlayerDan(winner);
+						if (danNow != null) {
+							bc(gm("&a[恭喜]: &7玩家 &e{player} &7突破了无段位的身份，首次获得了段位：&r{dan}&7！祝TA在单挑战斗的路上越走越远！",
+									null, "player dan", new String[] { winner,
+											danNow.getDisplayName() }),
+									startWay);
+						}
 					}
+					if (isDraw) {
+						if (arena.getDan(arena.isp1(loser)) != null) {
+							List<CustomDan> danList = dh.getCustomDans();
+							for (int i = 0; i < danList.size(); i++) {
+								CustomDan danBefore = arena.getDan(arena
+										.isp1(loser));
+								CustomDan danNow = dh.getPlayerDan(loser);
+								if (!danBefore.equals(danNow)) {
+									bc(gm("&a[恭喜]: &7玩家 &e{player} &7的单挑段位成功升到了&r{dan}",
+											null,
+											"player dan",
+											new String[] { loser,
+													danNow.getDisplayName() }),
+											startWay);
+								}
+							}
+						} else {
+							CustomDan danNow = dh.getPlayerDan(loser);
+							bc(gm("&a[恭喜]: &7玩家 &e{player} &7突破了无段位的身份，首次获得了段位：&r{dan}&7！祝TA在单挑战斗的路上越走越远！",
+									null, "player dan", new String[] { loser,
+											danNow.getDisplayName() }),
+									startWay);
+						}
+					}
+					arena.finish();
 				}
-				arena.finish();
-			}
-		}.runTaskAsynchronously(getInstance());
+			}.runTaskAsynchronously(getInstance());
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			busyArenasName.remove(arena.getName());
+			arena.finish();
+			Debug.send("§c比赛结束时出现异常！请将报错信息截图反馈给本插件作者",
+					"Some errors occured when the game finished!");
+		}
 	}
 
 	public static void compulsoryEnd(String name, Player finisher) {// 强制结束，不予记录

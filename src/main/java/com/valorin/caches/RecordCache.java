@@ -109,7 +109,7 @@ public class RecordCache {
 
 	public int getGameTimes(String name) {
 		try {
-			return winsMap.get(name) + losesMap.get(name) + drawsMap.get(name);
+			return recordMap.get(name).size();
 		} catch (Exception e) {
 			return 0;
 		}
