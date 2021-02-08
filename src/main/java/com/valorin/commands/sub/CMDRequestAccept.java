@@ -48,10 +48,6 @@ public class CMDRequestAccept extends SubCommand implements InServerCommand {
 				rh.removeRequest(sn, an);
 				sm("&a[v]已接受请求", a);
 				sm("&a[v]对方接受了你的请求！", s);
-				if (cache.isEnable()) {
-					cache.set(sn, cache.get(sn) - cache.getEnergyNeeded());
-					cache.set(an, cache.get(an) - cache.getEnergyNeeded());
-				}
 				new StartGame(a, s, null, null, 2);
 			} else {
 				sm("&6发现有&e多个&6待处理的请求，请选择处理 [right]", a);
@@ -75,10 +71,6 @@ public class CMDRequestAccept extends SubCommand implements InServerCommand {
 				rh.removeRequest(sn, an);
 				sm("&a[v]已接受请求", a);
 				sm("&a[v]对方接受了你的请求！", s);
-				if (cache.isEnable()) {
-					cache.set(sn, cache.get(sn) - cache.getEnergyNeeded());
-					cache.set(an, cache.get(an) - cache.getEnergyNeeded());
-				}
 				new StartGame(a, s, null, null, 2);
 			}
 		}

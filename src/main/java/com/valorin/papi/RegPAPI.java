@@ -203,11 +203,13 @@ public class RegPAPI extends PlaceholderHook {
 			String arenaName = gm("&7无数据", p);
 			if (lastRecord.getArenaEditName() != null) {
 				String editName = lastRecord.getArenaEditName();
-				if (arenaInfoCache.get(editName).getDisplayName() != null) {
-					arenaName = arenaInfoCache.get(editName).getDisplayName()
-							.replace("&", "§");
-				} else {
-					arenaName = editName;
+				if (arenaInfoCache.get(editName) != null) {
+					if (arenaInfoCache.get(editName).getDisplayName() != null) {
+						arenaName = arenaInfoCache.get(editName)
+								.getDisplayName().replace("&", "§");
+					} else {
+						arenaName = editName;
+					}
 				}
 			}
 			return arenaName;
@@ -289,12 +291,14 @@ public class RegPAPI extends PlaceholderHook {
 		}
 		if (i.equalsIgnoreCase("gametimesproportion")) {
 			int serverValue = recordCache.getServerTotalGameTimes();
-			int globalValue = Main.getInstance().getGlobalGameTimes().getValue();
+			int globalValue = Main.getInstance().getGlobalGameTimes()
+					.getValue();
 			if (serverValue != -1 && globalValue != -1) {
-				BigDecimal bg = new BigDecimal(((double)serverValue/(double)globalValue)*100);
+				BigDecimal bg = new BigDecimal(
+						((double) serverValue / (double) globalValue) * 100);
 				double value = bg.setScale(4, BigDecimal.ROUND_HALF_UP)
 						.doubleValue();
-				return "" + value +"%";
+				return "" + value + "%";
 			} else {
 				return "Loading...";
 			}

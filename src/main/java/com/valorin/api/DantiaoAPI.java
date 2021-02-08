@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import com.valorin.caches.EnergyCache;
 import com.valorin.dan.CustomDan;
 import com.valorin.dan.DanHandler;
-import com.valorin.data.Data;
 import com.valorin.ranking.Ranking;
 
 /**
@@ -28,7 +27,7 @@ public class DantiaoAPI {
 	 * @return 玩家的单挑积分
 	 */
 	public static double getPlayerPoints(Player p) {
-		return Data.getPoint(p.getName());
+		return getInstance().getCacheHandler().getPoint().get(p.getName());
 	}
 
 	/**
@@ -41,7 +40,31 @@ public class DantiaoAPI {
 	 * @return 玩家的单挑积分
 	 */
 	public static void setPlayerPoints(Player p, double value) {
-		Data.setPoint(p.getName(), value, true);
+		getInstance().getCacheHandler().getPoint().set(p.getName(), value);
+	}
+	
+	/**
+	 * 获取某玩家的段位经验
+	 * 
+	 * @param p
+	 *            玩家
+	 * @return 玩家的段位经验
+	 */
+	public static int getPlayerExp(Player p) {
+		return getInstance().getCacheHandler().getDan().get(p.getName());
+	}
+
+	/**
+	 * 设置某玩家的段位经验
+	 * 
+	 * @param p
+	 *            玩家
+	 * @param value
+	 *            值
+	 * @return 玩家的段位经验
+	 */
+	public static void setPlayerExp(Player p, int value) {
+		getInstance().getCacheHandler().getDan().set(p.getName(), value);
 	}
 
 	/**
@@ -52,7 +75,7 @@ public class DantiaoAPI {
 	 * @return 玩家的胜利场数
 	 */
 	public static int getPlayerWin(Player p) {
-		return Data.getWins(p.getName());
+		return getInstance().getCacheHandler().getRecord().getWins(p.getName());
 	}
 
 	/**
@@ -63,7 +86,8 @@ public class DantiaoAPI {
 	 * @return 玩家的战败场数
 	 */
 	public static int getPlayerLose(Player p) {
-		return Data.getLoses(p.getName());
+		return getInstance().getCacheHandler().getRecord()
+				.getLoses(p.getName());
 	}
 
 	/**
@@ -74,7 +98,8 @@ public class DantiaoAPI {
 	 * @return 玩家的平局场数
 	 */
 	public static int getPlayerDraw(Player p) {
-		return Data.getDraws(p.getName());
+		return getInstance().getCacheHandler().getRecord()
+				.getDraws(p.getName());
 	}
 
 	/**
@@ -123,8 +148,10 @@ public class DantiaoAPI {
 	 */
 	public static double getPlayerKD(Player p) {
 		double kd = 0;
-		int wins = Data.getWins(p.getName());
-		int loses = Data.getLoses(p.getName());
+		int wins = getInstance().getCacheHandler().getRecord()
+				.getWins(p.getName());
+		int loses = getInstance().getCacheHandler().getRecord()
+				.getLoses(p.getName());
 		if ((double) loses != 0) {
 			kd = (double) wins / (double) loses;
 		} else {
@@ -168,9 +195,13 @@ public class DantiaoAPI {
 	 */
 	public static String getPlayerDanName(Player p) {
 		DanHandler dan = getInstance().getDanHandler();
-		return dan.getPlayerDan(p.getName()).getDisplayName();
+		if (dan != null) {
+			return dan.getPlayerDan(p.getName()).getDisplayName();
+		} else {
+			return getInstance().getConfigManager().getInitialDanName();
+		}
 	}
-	
+
 	/**
 	 * 获取某玩家的段位
 	 * 
@@ -181,5 +212,14 @@ public class DantiaoAPI {
 	public static CustomDan getPlayerDan(Player p) {
 		DanHandler dan = getInstance().getDanHandler();
 		return dan.getPlayerDan(p.getName());
+	}
+	
+	/**
+	 * 获取DanHandler
+	 * 
+	 * @return DanHandler
+	 */
+	public static DanHandler getDanHandler() {
+		return getInstance().getDanHandler();
 	}
 }

@@ -156,7 +156,7 @@ public class ConfigManager {
 	}
 
 	public double getEnergyResumePerSecond() {
-		return config.getDouble("Energy.Persecond");
+		return config.getDouble("Energy.PerSecond");
 	}
 
 	public boolean isWorldWhitelistEnabled() {

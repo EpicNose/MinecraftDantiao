@@ -2,6 +2,8 @@
 
 import static com.valorin.configuration.languagefile.MessageSender.sm;
 
+import java.math.BigDecimal;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -56,11 +58,12 @@ public class CMDEnergy extends SubCommand {
 				sm("&c[x]这条指令只能由服务器内的玩家执行！后台无法使用！", p);
 				return true;
 			}
-			sm("&6我的精力值 [right] &b{energy}/&3{maxenergy}",
-					p,
+			BigDecimal bg = new BigDecimal(cache.get(p.getName()));
+			double energy = bg.setScale(1, BigDecimal.ROUND_HALF_UP)
+					.doubleValue();
+			sm("&6我的精力值 [right] &b{energy}/&3{maxenergy}", p,
 					"energy maxenergy",
-					new String[] { "" + cache.get(p.getName()),
-							"" + cache.getMaxEnergy() });
+					new String[] { "" + energy, "" + cache.getMaxEnergy() });
 			return true;
 		}
 		if (!sender.hasPermission("dt.admin")) {

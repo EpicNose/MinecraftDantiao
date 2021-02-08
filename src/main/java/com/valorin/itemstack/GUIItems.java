@@ -101,11 +101,13 @@ public class GUIItems {
 		String arenaName = gm("&7&m未记录&r", p);
 		if (record.getArenaEditName() != null) {
 			String editName = record.getArenaEditName();
-			if (arenaInfoCache.get(editName).getDisplayName() != null) {
-				arenaName = arenaInfoCache.get(editName).getDisplayName()
-						.replace("&", "§");
-			} else {
-				arenaName = editName;
+			if (arenaInfoCache.get(editName) != null) {
+				if (arenaInfoCache.get(editName).getDisplayName() != null) {
+					arenaName = arenaInfoCache.get(editName).getDisplayName()
+							.replace("&", "§");
+				} else {
+					arenaName = editName;
+				}
 			}
 		}
 

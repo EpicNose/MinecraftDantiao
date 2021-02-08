@@ -1,16 +1,15 @@
 package com.valorin.task;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class GlobalGameTimes extends BukkitRunnable {
@@ -22,33 +21,25 @@ public class GlobalGameTimes extends BukkitRunnable {
 	
 	public void run() {
 		try {
-			String url = "https://service.zhanshi123.me/plugins/dantiao.php";   
-	        String json = loadJson(url); 
-	        JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-	        JsonElement gameTimesStr = jsonObject.get("message");
-	        times = Integer.parseInt(gameTimesStr.getAsString());
+			URL url = new URL(
+					"https://bstats.org/api/v1/plugins/6343/charts/duel_amount/data/?maxElements=17520");
+			HttpURLConnection connection = (HttpURLConnection) url
+					.openConnection();
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; GTB7.5; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727)");
+			InputStream in = connection.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(in,
+					"UTF-8"));
+			String json = br.readLine();
+			br.close();
+			in.close();
+			JsonArray jsonArray = new JsonParser().parse(json).getAsJsonArray();
+			int times = 0;
+			for (JsonElement jsonElement : jsonArray) {
+				times = times + ((JsonArray) jsonElement).get(1).getAsInt();
+			}
+	        this.times = times;
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
-	
-	private String loadJson (String url) {  
-        StringBuilder json = new StringBuilder();  
-        try {  
-            URL urlObject = new URL(url);  
-            URLConnection uc = urlObject.openConnection();  
-            uc.setConnectTimeout(30000);
-            BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));  
-            String inputLine = null;  
-            while ( (inputLine = in.readLine()) != null) {  
-                json.append(inputLine);  
-            }  
-            in.close();  
-        } catch (MalformedURLException e) {  
-            e.printStackTrace();  
-        } catch (IOException e) {  
-            e.printStackTrace();  
-        }  
-        return json.toString();  
-    }
 }

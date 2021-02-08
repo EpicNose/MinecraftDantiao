@@ -1,5 +1,7 @@
 ﻿package com.valorin.event.game;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,7 +19,9 @@ public class Teleport implements Listener {
 		Player p = e.getPlayer();
 		String pn = p.getName();
 		ArenaManager ah = Main.getInstance().getArenaManager();
-		if (pn == null) { return; }
+		if (pn == null) {
+			return;
+		}
 		if (ah.isPlayerBusy(pn)) {
 			Arena arena = ah.getArena(ah.getPlayerOfArena(pn));
 			if (!arena.canTeleport()) {
@@ -25,6 +29,34 @@ public class Teleport implements Listener {
 					e.setCancelled(true);
 					sm("&c[x]发生非法传送，已制止", p);
 				}
+			}
+		}
+	}
+
+	@EventHandler
+	public void onTpToGamer(PlayerTeleportEvent e) {// 场外玩家企图传送到场内玩家身边给TA武器什么的
+		Player p = e.getPlayer();
+		String pn = p.getName();
+		ArenaManager ah = Main.getInstance().getArenaManager();
+		if (pn == null) {
+			return;
+		}
+		Location to = e.getTo();
+		for (String arenaEditName : ArenaManager.busyArenasName) {
+			Arena arena = ah.getArena(arenaEditName);
+			Location player1Location = Bukkit.getPlayerExact(arena.getp1())
+					.getLocation();
+			Location player2Location = Bukkit.getPlayerExact(arena.getp2())
+					.getLocation();
+			if ((Math.abs(player1Location.getBlockX() - to.getBlockX()) <= 2
+					&& Math.abs(player1Location.getBlockY() - to.getBlockY()) <= 2 && Math
+					.abs(player1Location.getBlockZ() - to.getBlockZ()) <= 2)
+					|| (Math.abs(player2Location.getBlockX() - to.getBlockX()) <= 2
+							&& Math.abs(player2Location.getBlockY()
+									- to.getBlockY()) <= 2 && Math
+							.abs(player2Location.getBlockZ() - to.getBlockZ()) <= 2)) {
+				e.setCancelled(true);
+				sm("&c[x]发生非法传送，已制止", p);
 			}
 		}
 	}
