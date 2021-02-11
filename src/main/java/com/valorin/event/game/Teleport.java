@@ -44,6 +44,10 @@ public class Teleport implements Listener {
 		Location to = e.getTo();
 		for (String arenaEditName : ArenaManager.busyArenasName) {
 			Arena arena = ah.getArena(arenaEditName);
+			if (p.equals(Bukkit.getPlayerExact(arena.getp1())) ||
+					p.equals(Bukkit.getPlayerExact(arena.getp2()))) {
+				continue;
+			}
 			Location player1Location = Bukkit.getPlayerExact(arena.getp1())
 					.getLocation();
 			Location player2Location = Bukkit.getPlayerExact(arena.getp2())
