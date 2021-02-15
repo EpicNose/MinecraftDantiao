@@ -1,6 +1,6 @@
 package com.valorin.ranking.type;
 
-import me.arasple.mc.trhologram.hologram.Hologram;
+import me.arasple.mc.trhologram.module.display.Hologram;
 
 public class TypeTrHologram {
 	public static Hologram hologramWin;

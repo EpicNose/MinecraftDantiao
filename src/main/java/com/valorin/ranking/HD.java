@@ -10,7 +10,6 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.valorin.Main;
@@ -187,15 +186,11 @@ public class HD {
 								});
 			}
 			if (useHD == 2) {
-				if (me.arasple.mc.trhologram.api.TrHologramAPI
-						.getHologramById("Win") != null) {
-					me.arasple.mc.trhologram.api.TrHologramAPI.getHologramById(
-							"Win").delete();
+				if (TypeTrHologram.hologramWin != null) {
+					TypeTrHologram.hologramWin.destroy();
 				}
-				if (me.arasple.mc.trhologram.api.TrHologramAPI
-						.getHologramById("KD") != null) {
-					me.arasple.mc.trhologram.api.TrHologramAPI.getHologramById(
-							"KD").delete();
+				if (TypeTrHologram.hologramKD != null) {
+					TypeTrHologram.hologramKD.destroy();
 				}
 			}
 		}
@@ -203,20 +198,20 @@ public class HD {
 		if (n == 0 || n == 1) {
 			if (useHD == 1) {
 				if (TypeHolographicDisplays.hologramWin != null) {
-						TypeHolographicDisplays.hologramWin.delete();
+					TypeHolographicDisplays.hologramWin.delete();
 					TypeHolographicDisplays.hologramWin = null;
 				}
 			}
 			if (useHD == 2) {
 				if (TypeTrHologram.hologramWin != null) {
-					TypeTrHologram.hologramWin.delete();
+					TypeTrHologram.hologramWin.destroy();
 					TypeTrHologram.hologramWin = null;
 				}
 			}
 
 			Location winRankingLocation = areaCache.getWinRankingLocation();
 			if (winRankingLocation != null) {
-				if (useHD == 1) { // HolographicDisplays需要同步刷新
+				if (useHD == 1) { // HolographicDisplays需要同步执行刷新操作
 					Bukkit.getScheduler()
 							.runTask(
 									plugin,
@@ -225,7 +220,8 @@ public class HD {
 												.createHologram(plugin,
 														winRankingLocation);
 										TypeHolographicDisplays.hologramWin.appendItemLine(new ItemStack(
-												ViaVersion.getGoldenSwordMaterial()));
+												ViaVersion
+														.getGoldenSwordMaterial()));
 										for (String rankingString : winList) {
 											TypeHolographicDisplays.hologramWin
 													.appendTextLine(rankingString);
@@ -233,28 +229,31 @@ public class HD {
 									});
 				}
 				if (useHD == 2) {
-					List<String> winListEx = new ArrayList<String>();
-					winListEx.add("item:GOLD_SWORD");
-					winListEx.addAll(winList);
-					TypeTrHologram.hologramWin = me.arasple.mc.trhologram.api.TrHologramAPI
-							.createHologram((Plugin) plugin, "Win",
-									winRankingLocation, winListEx);
+					me.arasple.mc.trhologram.api.hologram.HologramBuilder builder = me.arasple.mc.trhologram.api.TrHologramAPI
+							.builder(winRankingLocation);
+					builder.append(viewer -> new ItemStack(ViaVersion.getGoldenSwordMaterial()));
+					for (String winListString : winList) {
+						builder.append(winListString);
+					}
+					TypeTrHologram.hologramWin = builder.build();
 				}
 			} else {
-				/*Bukkit.getConsoleSender().sendMessage(
-						gm("&c检测到[胜场排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));*/
+				/*
+				 * Bukkit.getConsoleSender().sendMessage(
+				 * gm("&c检测到[胜场排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));
+				 */
 			}
 		}
 		if (n == 0 || n == 2) {
 			if (useHD == 1) {
 				if (TypeHolographicDisplays.hologramKD != null) {
-						TypeHolographicDisplays.hologramKD.delete();
+					TypeHolographicDisplays.hologramKD.delete();
 				}
 				TypeHolographicDisplays.hologramKD = null;
 			}
 			if (useHD == 2) {
 				if (TypeTrHologram.hologramKD != null) {
-					TypeTrHologram.hologramKD.delete();
+					TypeTrHologram.hologramKD.destroy();
 					TypeTrHologram.hologramKD = null;
 				}
 			}
@@ -269,7 +268,8 @@ public class HD {
 												.createHologram(plugin,
 														KDRankingLocation);
 										TypeHolographicDisplays.hologramKD.appendItemLine(new ItemStack(
-												ViaVersion.getGoldenAxeMaterial()));
+												ViaVersion
+														.getGoldenAxeMaterial()));
 										for (String rankingString : KDList) {
 											TypeHolographicDisplays.hologramKD
 													.appendTextLine(rankingString);
@@ -277,16 +277,19 @@ public class HD {
 									});
 				}
 				if (useHD == 2) {
-					List<String> KDListEx = new ArrayList<String>();
-					KDListEx.add("item:GOLD_AXE");
-					KDListEx.addAll(KDList);
-					TypeTrHologram.hologramKD = me.arasple.mc.trhologram.api.TrHologramAPI
-							.createHologram((Plugin) plugin, "KD",
-									KDRankingLocation, KDListEx);
+					me.arasple.mc.trhologram.api.hologram.HologramBuilder builder = me.arasple.mc.trhologram.api.TrHologramAPI
+							.builder(KDRankingLocation);
+					builder.append(viewer -> new ItemStack(ViaVersion.getGoldenAxeMaterial()));
+					for (String KDListString : KDList) {
+						builder.append(KDListString);
+					}
+					TypeTrHologram.hologramKD = builder.build();
 				}
 			} else {
-				/*Bukkit.getConsoleSender().sendMessage(
-						gm("&c检测到[KD排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));*/
+				/*
+				 * Bukkit.getConsoleSender().sendMessage(
+				 * gm("&c检测到[KD排行榜]的全息图所在的世界不存在，全息图加载失败，建议将该全息图换个位置"));
+				 */
 			}
 		}
 	}
@@ -304,7 +307,7 @@ public class HD {
 			}
 			if (Bukkit.getPluginManager().getPlugin("TrHologram") != null) {
 				if (TypeTrHologram.hologramWin != null) {
-					TypeTrHologram.hologramWin.delete();
+					TypeTrHologram.hologramWin.destroy();
 					TypeTrHologram.hologramWin = null;
 				}
 			}
@@ -318,7 +321,7 @@ public class HD {
 			}
 			if (Bukkit.getPluginManager().getPlugin("TrHologram") != null) {
 				if (TypeTrHologram.hologramKD != null) {
-					TypeTrHologram.hologramKD.delete();
+					TypeTrHologram.hologramKD.destroy();
 					TypeTrHologram.hologramKD = null;
 				}
 			}
