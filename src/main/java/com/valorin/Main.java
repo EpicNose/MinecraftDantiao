@@ -1,5 +1,7 @@
 ﻿package com.valorin;
 
+import java.lang.reflect.Method;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,6 +57,7 @@ public class Main extends JavaPlugin {
 	private CacheHandler cacheHandler;
 	private GlobalGameTimes globalGameTimes;
 	private ConfigManager configManager;
+	private RegPAPI regPAPI;
 
 	public static String getVersion() {
 		return version;
@@ -189,7 +192,11 @@ public class Main extends JavaPlugin {
 					EventRegister.registerEvents();
 					if (Bukkit.getPluginManager().isPluginEnabled(
 							"PlaceholderAPI")) {
-						RegPAPI.hook();
+						if (!me.clip.placeholderapi.PlaceholderAPI
+								.isRegistered("dantiao")) {
+							regPAPI = new RegPAPI();
+							regPAPI.register();
+						}
 					} else {
 						console.sendMessage("§8§l[§bDantiao§8§l]");
 						console.sendMessage("§f- §c未发现PlaceholderAPI变量插件，将无法使用PAPI的相关功能，若您刚安装，请尝试重启服务器");
@@ -208,7 +215,10 @@ public class Main extends JavaPlugin {
 		hd.unload(0);
 		languageFileLoader.close();
 		if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-			RegPAPI.unhook();
+			if (me.clip.placeholderapi.PlaceholderAPI
+					.isRegistered("dantiao")) {
+				unRegisterPAPI();
+			}
 		}
 		cacheHandler.unload();
 		Bukkit.getScheduler().cancelTasks(instance);
@@ -216,5 +226,33 @@ public class Main extends JavaPlugin {
 		console.sendMessage("§8§l[§bDantiao§8§l]");
 		console.sendMessage("§f- §7单挑插件V2已关闭，感谢你的使用");
 		console.sendMessage("§f- §7DantiaoV2 by:Valorin");
+	}
+	
+	public boolean isPAPIPluginVersionLow() {
+		Class<?> clazz;
+		try {
+			clazz = Class.forName("me.clip.placeholderapi.PlaceholderAPI");
+			for (Method method : clazz.getMethods()) {
+				if (method.getName().equals("unregisterExpansion")) {
+					return true;
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void unRegisterPAPI() {
+		try {
+			if (isPAPIPluginVersionLow()) {
+				Method method = Class.forName("me.clip.placeholderapi.PlaceholderAPI").getMethod("unregisterExpansion");
+				method.invoke(regPAPI);
+			} else {
+				regPAPI.unregister();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

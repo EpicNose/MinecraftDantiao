@@ -5,8 +5,7 @@ import static com.valorin.configuration.languagefile.MessageSender.gm;
 
 import java.math.BigDecimal;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.PlaceholderHook;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 
 import org.bukkit.entity.Player;
 
@@ -21,8 +20,21 @@ import com.valorin.data.encapsulation.Record;
 import com.valorin.ranking.Ranking;
 import com.valorin.request.RequestsHandler;
 
-public class RegPAPI extends PlaceholderHook {
-	private static final String HOOK_NAME = "dantiao";
+public class RegPAPI extends PlaceholderExpansion {
+	@Override
+	public String getAuthor() {
+		return "Valorin";
+	}
+
+	@Override
+	public String getIdentifier() {
+		return "dantiao";
+	}
+
+	@Override
+	public String getVersion() {
+		return Main.getInstance().getDescription().getVersion();
+	}
 
 	@Override
 	public String onPlaceholderRequest(Player p, String i) {
@@ -304,13 +316,5 @@ public class RegPAPI extends PlaceholderHook {
 			}
 		}
 		return "?";
-	}
-
-	public static void hook() {
-		PlaceholderAPI.registerPlaceholderHook(HOOK_NAME, new RegPAPI());
-	}
-
-	public static void unhook() {
-		PlaceholderAPI.unregisterPlaceholderHook(HOOK_NAME);
 	}
 }
